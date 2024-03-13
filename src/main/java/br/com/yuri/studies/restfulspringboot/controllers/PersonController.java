@@ -1,10 +1,10 @@
 package br.com.yuri.studies.restfulspringboot.controllers;
 
-import br.com.yuri.studies.restfulspringboot.services.PersonService;
 import br.com.yuri.studies.restfulspringboot.dtos.PersonDTO;
+import br.com.yuri.studies.restfulspringboot.services.PersonService;
+import br.com.yuri.studies.restfulspringboot.util.ProjectMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,32 +21,34 @@ import java.util.List;
 @RequestMapping("/person")
 public class PersonController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
 
-    @GetMapping(
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Autowired
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
+
+    @GetMapping(produces = {ProjectMediaType.APPLICATION_JSON, ProjectMediaType.APPLICATION_XML, ProjectMediaType.APPLICATION_YML})
     public List<PersonDTO> findAll() {
         return personService.findAll();
     }
 
     @GetMapping(value = "/{id}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = {ProjectMediaType.APPLICATION_JSON, ProjectMediaType.APPLICATION_XML, ProjectMediaType.APPLICATION_YML})
     public PersonDTO findById(@PathVariable Long id) {
         return personService.findById(id);
     }
 
     @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = {ProjectMediaType.APPLICATION_JSON, ProjectMediaType.APPLICATION_XML, ProjectMediaType.APPLICATION_YML},
+            produces = {ProjectMediaType.APPLICATION_JSON, ProjectMediaType.APPLICATION_XML, ProjectMediaType.APPLICATION_YML})
     public PersonDTO create(@RequestBody PersonDTO personDTO) {
         return personService.create(personDTO);
     }
 
-    @PutMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}",
+            consumes = {ProjectMediaType.APPLICATION_JSON, ProjectMediaType.APPLICATION_XML, ProjectMediaType.APPLICATION_YML},
+            produces = {ProjectMediaType.APPLICATION_JSON, ProjectMediaType.APPLICATION_XML, ProjectMediaType.APPLICATION_YML})
     public PersonDTO update(@PathVariable Long id, @RequestBody PersonDTO personDTO) {
         return personService.update(id, personDTO);
     }
@@ -56,5 +58,4 @@ public class PersonController {
         personService.deleteById(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
-
 }

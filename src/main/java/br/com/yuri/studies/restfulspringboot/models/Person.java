@@ -1,4 +1,4 @@
-package br.com.yuri.studies.restfulspringboot.model;
+package br.com.yuri.studies.restfulspringboot.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

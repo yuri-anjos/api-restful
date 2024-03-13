@@ -3,7 +3,7 @@ package br.com.yuri.studies.restfulspringboot.unittests.mapper;
 import br.com.yuri.studies.restfulspringboot.dtos.PersonDTO;
 import br.com.yuri.studies.restfulspringboot.mapper.Mapper;
 import br.com.yuri.studies.restfulspringboot.mocks.MockPerson;
-import br.com.yuri.studies.restfulspringboot.model.Person;
+import br.com.yuri.studies.restfulspringboot.models.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,17 +11,17 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MapperTest {
+class MapperTest {
 
     private MockPerson mockPerson;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         mockPerson = new MockPerson();
     }
 
     @Test
-    public void parseEntityToVOTest() {
+    void parseEntityToVOTest() {
         PersonDTO output = Mapper.parseObject(mockPerson.mockEntity(), PersonDTO.class);
         assertEquals(Long.valueOf(0L), output.getId());
         assertEquals("First Name Test0", output.getFirstName());
@@ -31,7 +31,7 @@ public class MapperTest {
     }
 
     @Test
-    public void parseEntityListToVOListTest() {
+    void parseEntityListToVOListTest() {
         List<PersonDTO> outputList = Mapper.parseObject(mockPerson.mockEntityList(), PersonDTO.class);
         PersonDTO outputZero = outputList.get(0);
 
@@ -59,7 +59,7 @@ public class MapperTest {
     }
 
     @Test
-    public void parseVOToEntityTest() {
+    void parseVOToEntityTest() {
         Person output = Mapper.parseObject(mockPerson.mockVO(), Person.class);
         assertEquals(Long.valueOf(0L), output.getId());
         assertEquals("First Name Test0", output.getFirstName());
@@ -69,7 +69,7 @@ public class MapperTest {
     }
 
     @Test
-    public void parserVOListToEntityListTest() {
+    void parserVOListToEntityListTest() {
         List<Person> outputList = Mapper.parseObject(mockPerson.mockVOList(), Person.class);
         Person outputZero = outputList.get(0);
 

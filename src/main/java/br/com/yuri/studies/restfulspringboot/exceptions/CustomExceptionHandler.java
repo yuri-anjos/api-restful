@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Date;
 
 @ControllerAdvice
@@ -23,7 +21,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public final ResponseEntity<ExceptionResponse> handleResourceNotFoundException(Exception exception, WebRequest request){
+    public final ResponseEntity<ExceptionResponse> handleResourceNotFoundException(Exception exception, WebRequest request) {
         var exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }

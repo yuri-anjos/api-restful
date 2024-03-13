@@ -3,7 +3,7 @@ package br.com.yuri.studies.restfulspringboot.services;
 import br.com.yuri.studies.restfulspringboot.dtos.PersonDTO;
 import br.com.yuri.studies.restfulspringboot.exceptions.ResourceNotFoundException;
 import br.com.yuri.studies.restfulspringboot.mapper.Mapper;
-import br.com.yuri.studies.restfulspringboot.model.Person;
+import br.com.yuri.studies.restfulspringboot.models.Person;
 import br.com.yuri.studies.restfulspringboot.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +14,14 @@ import java.util.logging.Logger;
 @Service
 public class PersonService {
 
-    private Logger logger = Logger.getLogger(PersonService.class.getName());
+    private final Logger logger = Logger.getLogger(PersonService.class.getName());
+
+    private final PersonRepository personRepository;
 
     @Autowired
-    private PersonRepository personRepository;
+    public PersonService(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
 
     public List<PersonDTO> findAll() {
         var peaple = personRepository.findAll();

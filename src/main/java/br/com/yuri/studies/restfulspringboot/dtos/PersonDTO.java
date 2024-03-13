@@ -1,7 +1,5 @@
 package br.com.yuri.studies.restfulspringboot.dtos;
 
-import br.com.yuri.studies.restfulspringboot.model.Person;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;

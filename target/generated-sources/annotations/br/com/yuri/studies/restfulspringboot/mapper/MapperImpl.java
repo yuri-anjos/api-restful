@@ -1,7 +1,7 @@
 package br.com.yuri.studies.restfulspringboot.mapper;
 
 import br.com.yuri.studies.restfulspringboot.dtos.PersonDTO;
-import br.com.yuri.studies.restfulspringboot.model.Person;
+import br.com.yuri.studies.restfulspringboot.models.Person;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
