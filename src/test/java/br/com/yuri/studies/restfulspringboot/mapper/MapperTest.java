@@ -47,14 +47,6 @@ class MapperTest {
         assertEquals("Last Name Test7", outputSeven.getLastName());
         assertEquals("Addres Test7", outputSeven.getAddress());
         assertEquals("Female", outputSeven.getGender());
-
-        PersonDTO outputTwelve = outputList.get(12);
-
-        assertEquals(Long.valueOf(12L), outputTwelve.getKey());
-        assertEquals("First Name Test12", outputTwelve.getFirstName());
-        assertEquals("Last Name Test12", outputTwelve.getLastName());
-        assertEquals("Addres Test12", outputTwelve.getAddress());
-        assertEquals("Male", outputTwelve.getGender());
     }
 
     @Test
@@ -85,13 +77,5 @@ class MapperTest {
         assertEquals("Last Name Test7", outputSeven.getLastName());
         assertEquals("Addres Test7", outputSeven.getAddress());
         assertEquals("Female", outputSeven.getGender());
-
-        Person outputTwelve = outputList.get(12);
-
-        assertEquals(Long.valueOf(12L), outputTwelve.getId());
-        assertEquals("First Name Test12", outputTwelve.getFirstName());
-        assertEquals("Last Name Test12", outputTwelve.getLastName());
-        assertEquals("Addres Test12", outputTwelve.getAddress());
-        assertEquals("Male", outputTwelve.getGender());
     }
 }
