@@ -1,7 +1,6 @@
-package br.com.yuri.studies.restfulspringboot.unittests.mapper;
+package br.com.yuri.studies.restfulspringboot.mapper;
 
 import br.com.yuri.studies.restfulspringboot.dtos.PersonDTO;
-import br.com.yuri.studies.restfulspringboot.mapper.Mapper;
 import br.com.yuri.studies.restfulspringboot.mocks.MockPerson;
 import br.com.yuri.studies.restfulspringboot.models.Person;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +22,7 @@ class MapperTest {
     @Test
     void parseEntityToVOTest() {
         PersonDTO output = Mapper.parseObject(mockPerson.mockEntity(), PersonDTO.class);
-        assertEquals(Long.valueOf(0L), output.getId());
+        assertEquals(Long.valueOf(0L), output.getKey());
         assertEquals("First Name Test0", output.getFirstName());
         assertEquals("Last Name Test0", output.getLastName());
         assertEquals("Addres Test0", output.getAddress());
@@ -35,7 +34,7 @@ class MapperTest {
         List<PersonDTO> outputList = Mapper.parseObject(mockPerson.mockEntityList(), PersonDTO.class);
         PersonDTO outputZero = outputList.get(0);
 
-        assertEquals(Long.valueOf(0L), outputZero.getId());
+        assertEquals(Long.valueOf(0L), outputZero.getKey());
         assertEquals("First Name Test0", outputZero.getFirstName());
         assertEquals("Last Name Test0", outputZero.getLastName());
         assertEquals("Addres Test0", outputZero.getAddress());
@@ -43,7 +42,7 @@ class MapperTest {
 
         PersonDTO outputSeven = outputList.get(7);
 
-        assertEquals(Long.valueOf(7L), outputSeven.getId());
+        assertEquals(Long.valueOf(7L), outputSeven.getKey());
         assertEquals("First Name Test7", outputSeven.getFirstName());
         assertEquals("Last Name Test7", outputSeven.getLastName());
         assertEquals("Addres Test7", outputSeven.getAddress());
@@ -51,7 +50,7 @@ class MapperTest {
 
         PersonDTO outputTwelve = outputList.get(12);
 
-        assertEquals(Long.valueOf(12L), outputTwelve.getId());
+        assertEquals(Long.valueOf(12L), outputTwelve.getKey());
         assertEquals("First Name Test12", outputTwelve.getFirstName());
         assertEquals("Last Name Test12", outputTwelve.getLastName());
         assertEquals("Addres Test12", outputTwelve.getAddress());
@@ -60,7 +59,7 @@ class MapperTest {
 
     @Test
     void parseVOToEntityTest() {
-        Person output = Mapper.parseObject(mockPerson.mockVO(), Person.class);
+        Person output = Mapper.parseObject(mockPerson.mockDTO(), Person.class);
         assertEquals(Long.valueOf(0L), output.getId());
         assertEquals("First Name Test0", output.getFirstName());
         assertEquals("Last Name Test0", output.getLastName());
@@ -70,7 +69,7 @@ class MapperTest {
 
     @Test
     void parserVOListToEntityListTest() {
-        List<Person> outputList = Mapper.parseObject(mockPerson.mockVOList(), Person.class);
+        List<Person> outputList = Mapper.parseObject(mockPerson.mockDTOList(), Person.class);
         Person outputZero = outputList.get(0);
 
         assertEquals(Long.valueOf(0L), outputZero.getId());

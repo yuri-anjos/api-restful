@@ -1,5 +1,7 @@
-package br.com.yuri.studies.restfulspringboot.exceptions;
+package br.com.yuri.studies.restfulspringboot.exceptions.handler;
 
+import br.com.yuri.studies.restfulspringboot.exceptions.ExceptionResponse;
+import br.com.yuri.studies.restfulspringboot.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

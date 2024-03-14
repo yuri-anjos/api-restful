@@ -1,6 +1,8 @@
 package br.com.yuri.studies.restfulspringboot.services;
 
+import br.com.yuri.studies.restfulspringboot.controllers.PersonController;
 import br.com.yuri.studies.restfulspringboot.dtos.PersonDTO;
+import br.com.yuri.studies.restfulspringboot.exceptions.RequiredObjectIsNullException;
 import br.com.yuri.studies.restfulspringboot.exceptions.ResourceNotFoundException;
 import br.com.yuri.studies.restfulspringboot.mapper.Mapper;
 import br.com.yuri.studies.restfulspringboot.models.Person;
@@ -11,10 +13,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Service
 public class PersonService {
 
-    private final Logger logger = Logger.getLogger(PersonService.class.getName());
+    private static final Logger logger = Logger.getLogger(PersonService.class.getName());
 
     private final PersonRepository personRepository;
 
@@ -25,32 +30,50 @@ public class PersonService {
 
     public List<PersonDTO> findAll() {
         var peaple = personRepository.findAll();
-        return Mapper.parseObject(peaple, PersonDTO.class);
+
+        var peopleDTO = Mapper.parseObject(peaple, PersonDTO.class);
+        peopleDTO.forEach(p ->
+                p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+        return peopleDTO;
     }
 
     public PersonDTO findById(Long id) {
-        var person = findEntity(id);
-        return Mapper.parseObject(person, PersonDTO.class);
+        var personEntity = findEntity(id);
+        var personDTO = Mapper.parseObject(personEntity, PersonDTO.class);
+
+        personDTO.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+        return personDTO;
     }
 
-    public PersonDTO create(PersonDTO personDTO) {
-        Person person = Mapper.parseObject(personDTO, Person.class);
-        person.setId(null);
+    public PersonDTO create(PersonDTO body) {
+        if (body == null) {
+            throw new RequiredObjectIsNullException();
+        }
 
-        person = personRepository.save(person);
-        return Mapper.parseObject(person, PersonDTO.class);
+        Person entity = Mapper.parseObject(body, Person.class);
+        entity.setId(null);
+        entity = personRepository.save(entity);
+
+        var personDTO = Mapper.parseObject(entity, PersonDTO.class);
+        personDTO.add(linkTo(methodOn(PersonController.class).findById(personDTO.getKey())).withSelfRel());
+        return personDTO;
     }
 
-    public PersonDTO update(Long id, PersonDTO personDTO) {
-        var person = findEntity(id);
+    public PersonDTO update(Long id, PersonDTO body) {
+        if (body == null) {
+            throw new RequiredObjectIsNullException();
+        }
 
-        person.setFirstName(personDTO.getFirstName());
-        person.setLastName(personDTO.getLastName());
-        person.setAddress(personDTO.getAddress());
-        person.setGender(personDTO.getGender());
+        var entity = findEntity(id);
+        entity.setFirstName(body.getFirstName());
+        entity.setLastName(body.getLastName());
+        entity.setAddress(body.getAddress());
+        entity.setGender(body.getGender());
+        entity = personRepository.save(entity);
 
-        person = personRepository.save(person);
-        return Mapper.parseObject(person, PersonDTO.class);
+        var personDTO = Mapper.parseObject(entity, PersonDTO.class);
+        personDTO.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+        return personDTO;
     }
 
     public void deleteById(Long id) {
@@ -58,7 +81,7 @@ public class PersonService {
         personRepository.delete(person);
     }
 
-    public Person findEntity(Long id) {
+    private Person findEntity(Long id) {
         logger.info("Finding a Person...");
 
         return personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person not found."));
