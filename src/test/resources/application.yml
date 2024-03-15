@@ -1,11 +1,6 @@
 spring:
-  application:
-    name: restful-spring-boot
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/api-restful?useTimezone=true&serverTimezone=UTC
-    username: root
-    password: root
   jpa:
     show-sql: true
     hibernate:
@@ -13,8 +8,7 @@ spring:
     open-in-view: false
 
 server:
-  servlet:
-    context-path: /api
+  port: 8888
 
 spring-doc:
   pathsToMatch: /**/v1/**
