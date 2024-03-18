@@ -1,3 +1,8 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
 spring:
   application:
     name: restful-spring-boot
@@ -12,11 +17,10 @@ spring:
       ddl-auto: none
     open-in-view: false
 
-server:
-  servlet:
-    context-path: /api
-
 spring-doc:
-  pathsToMatch: /**/v1/**
+  pathsToMatch: /**
   swagger-ui:
     use-root-path: true
+
+cors:
+  originPatterns: http://localhost:3000,http://localhost:8080,https://yuri.studies.com.br
