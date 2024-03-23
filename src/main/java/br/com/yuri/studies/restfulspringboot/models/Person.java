@@ -16,78 +16,79 @@ import java.util.Objects;
 @Entity
 public class Person implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = -6449065051441085323L;
+	@Serial
+	private static final long serialVersionUID = -6449065051441085323L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "first_name", nullable = false, length = 80)
-    private String firstName;
+	@Column(name = "first_name", nullable = false, length = 80)
+	private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 80)
-    private String lastName;
+	@Column(name = "last_name", nullable = false, length = 80)
+	private String lastName;
 
-    @Column(nullable = false, length = 100)
-    private String address;
+	@Column(nullable = false, length = 100)
+	private String address;
 
-    @Column(nullable = false, length = 6)
-    private String gender;
+	@Column(nullable = false, length = 6)
+	private String gender;
 
-    public Person() {
-    }
+	public Person() {
+		// empty constructor.
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public String getGender() {
-        return gender;
-    }
+	public String getGender() {
+		return gender;
+	}
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Person person = (Person) o;
+		return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, firstName, lastName, address, gender);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, firstName, lastName, address, gender);
+	}
 }

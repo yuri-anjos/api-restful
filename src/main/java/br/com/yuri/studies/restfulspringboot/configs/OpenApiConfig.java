@@ -8,19 +8,19 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
-    @Bean
-    public OpenAPI customOpenApi(){
-        return new OpenAPI()
-                .info(new Info()
-                        .title("Api Restful Spring Boot 3")
-                        .version("v1")
-                        .description("Api Restful Spring Boot 3")
-                        .termsOfService("")
-                        .license(
-                                new License()
-                                        .name("")
-                                        .url("")
-                        )
-                );
-    }
+	@Bean
+	public OpenAPI customOpenApi() {
+		return new OpenAPI()
+				.info(new Info()
+						.title("Api Restful Spring Boot 3")
+						.version("v1")
+						.description("Api Restful Spring Boot 3")
+						.termsOfService("")
+						.license(
+								new License()
+										.name("")
+										.url("")
+						)
+				);
+	}
 }

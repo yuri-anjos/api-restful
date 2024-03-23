@@ -9,10 +9,10 @@ import java.io.Serializable;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1960179059773427831L;
+	@Serial
+	private static final long serialVersionUID = 1960179059773427831L;
 
-    public ResourceNotFoundException(String message) {
-        super(message);
-    }
+	public ResourceNotFoundException(String message) {
+		super(message);
+	}
 }

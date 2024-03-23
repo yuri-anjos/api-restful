@@ -2,6 +2,7 @@ server:
   port: 8888
   servlet:
     context-path: /api
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,9 +13,17 @@ spring:
     open-in-view: false
 
 spring-doc:
-  pathsToMatch: /**
+  pathsToMatch:
+    - /auth/**
+    - /**/v1/**
   swagger-ui:
     use-root-path: true
 
 cors:
   originPatterns: http://localhost:3000,http://localhost:8080,https://yuri.studies.com.br
+
+security:
+  jwt:
+    token:
+      secret-key: "secret-key"
+      expire-length: 3600000
