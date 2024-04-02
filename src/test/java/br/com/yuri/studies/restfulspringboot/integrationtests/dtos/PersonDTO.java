@@ -1,9 +1,12 @@
 package br.com.yuri.studies.restfulspringboot.integrationtests.dtos;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+@XmlRootElement(name = "PersonDTO")
 public class PersonDTO implements Serializable {
 
 	@Serial
@@ -16,6 +19,7 @@ public class PersonDTO implements Serializable {
 	private String gender;
 
 	public PersonDTO() {
+		// empty constructor.
 	}
 
 	public Long getId() {

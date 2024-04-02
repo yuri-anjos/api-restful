@@ -1,10 +1,13 @@
-package br.com.yuri.studies.restfulspringboot.dtos.security;
+package br.com.yuri.studies.restfulspringboot.integrationtests.dtos;
+
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
+@XmlRootElement(name = "TokenDTO")
 public class TokenDTO implements Serializable {
 
 	@Serial
