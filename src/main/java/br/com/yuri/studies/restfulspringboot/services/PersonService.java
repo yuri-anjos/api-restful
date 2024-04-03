@@ -3,11 +3,13 @@ package br.com.yuri.studies.restfulspringboot.services;
 import br.com.yuri.studies.restfulspringboot.controllers.PersonController;
 import br.com.yuri.studies.restfulspringboot.dtos.PersonDTO;
 import br.com.yuri.studies.restfulspringboot.exceptions.ResourceNotFoundException;
+import br.com.yuri.studies.restfulspringboot.exceptions.RuleException;
 import br.com.yuri.studies.restfulspringboot.mapper.Mapper;
 import br.com.yuri.studies.restfulspringboot.models.Person;
 import br.com.yuri.studies.restfulspringboot.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -28,12 +30,12 @@ public class PersonService {
 	}
 
 	public List<PersonDTO> findAll() {
-		var peaple = personRepository.findAll();
+		var result = personRepository.findAll();
 
-		var peopleDTO = Mapper.parseObject(peaple, PersonDTO.class);
-		peopleDTO.forEach(p ->
+		var resultDTO = Mapper.parseObject(result, PersonDTO.class);
+		resultDTO.forEach(p ->
 				p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
-		return peopleDTO;
+		return resultDTO;
 	}
 
 	public PersonDTO findById(Long id) {
@@ -72,9 +74,21 @@ public class PersonService {
 		personRepository.delete(person);
 	}
 
+	@Transactional
+	public void disablePerson(Long id) {
+		LOGGER.info("Disabling a Person...");
+
+		var person = findEntity(id);
+		if(Boolean.FALSE.equals(person.getEnabled())){
+			throw new RuleException("Person is already disabled!");
+		}
+
+		personRepository.disablePerson(id);
+	}
+
 	private Person findEntity(Long id) {
 		LOGGER.info("Finding a Person...");
 
-		return personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person not found."));
+		return personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person not found!"));
 	}
 }

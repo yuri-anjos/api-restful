@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -106,7 +107,7 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
 	void createTest() {
 		mockPerson();
 
-		var createdPerson =
+		var result =
 				given()
 						.spec(specification)
 						.body(personDTO, mapper)
@@ -118,42 +119,30 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
 						.body()
 						.as(PersonDTO.class, mapper);
 
-		personDTO.setId(createdPerson.getId());
+		assertNotNull(result);
+		assertNotNull(result.getId());
+		assertEquals(personDTO.getFirstName(), result.getFirstName());
+		assertEquals(personDTO.getLastName(), result.getLastName());
+		assertEquals(personDTO.getAddress(), result.getAddress());
+		assertEquals(personDTO.getGender(), result.getGender());
+		assertTrue(result.getEnabled());
 
-		assertNotNull(createdPerson);
-		assertNotNull(createdPerson.getId());
-		assertTrue(createdPerson.getId() > 0);
-		assertEquals(personDTO.getFirstName(), createdPerson.getFirstName());
-		assertEquals(personDTO.getLastName(), createdPerson.getLastName());
-		assertEquals(personDTO.getAddress(), createdPerson.getAddress());
-		assertEquals(personDTO.getGender(), createdPerson.getGender());
+		personDTO = result;
 	}
 
 	@Test
 	@Order(3)
-	void findByIdTest() {
-		mockPerson();
+	void testFindAll() {
+		var people = given().spec(specification)
+				.when()
+				.get()
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.as(PersonDTO[].class, mapper);
 
-		var result =
-				given()
-						.spec(specification)
-						.pathParam("id", personDTO.getId())
-						.when()
-						.get("{id}")
-						.then()
-						.statusCode(200)
-						.extract()
-						.body()
-						.as(PersonDTO.class, mapper);
-
-
-		assertNotNull(result);
-		assertNotNull(result.getId());
-		assertTrue(result.getId() > 0);
-		assertEquals("Adam", result.getFirstName());
-		assertEquals("Sandler", result.getLastName());
-		assertEquals("New York City, US", result.getAddress());
-		assertEquals("Male", result.getGender());
+		assertTrue(people.length > 0);
 	}
 
 	@Test
@@ -175,26 +164,59 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
 						.as(PersonDTO.class, mapper);
 
 		assertNotNull(result);
-		assertNotNull(result.getId());
-		assertTrue(result.getId() > 0);
-		assertEquals("Adam!", result.getFirstName());
-		assertEquals("Sandler!", result.getLastName());
-		assertEquals("New York City, US!", result.getAddress());
-		assertEquals("Male", result.getGender());
+		assertEquals(personDTO.getId(), result.getId());
+		assertEquals(personDTO.getFirstName(), result.getFirstName());
+		assertEquals(personDTO.getLastName(), result.getLastName());
+		assertEquals(personDTO.getAddress(), result.getAddress());
+		assertEquals(personDTO.getGender(), result.getGender());
+		assertTrue(result.getEnabled());
+
+		personDTO = result;
 	}
 
 	@Test
 	@Order(5)
+	void disable() {
+		given()
+				.spec(specification)
+				.when()
+				.patch("/{id}/disable", personDTO.getId())
+				.then()
+				.statusCode(204);
+	}
+
+	@Test
+	@Order(6)
+	void findByIdTest() {
+		var result =
+				given()
+						.spec(specification)
+						.pathParam("id", personDTO.getId())
+						.when()
+						.get("{id}")
+						.then()
+						.statusCode(200)
+						.extract()
+						.body()
+						.as(PersonDTO.class, mapper);
+
+		assertNotNull(result);
+		assertEquals(personDTO.getId(), result.getId());
+		assertEquals(personDTO.getFirstName(), result.getFirstName());
+		assertEquals(personDTO.getLastName(), result.getLastName());
+		assertEquals(personDTO.getAddress(), result.getAddress());
+		assertEquals(personDTO.getGender(), result.getGender());
+		assertFalse(result.getEnabled());
+	}
+
+	@Test
+	@Order(7)
 	void delete() {
 		given()
 				.spec(specification)
-				.pathParam("id", personDTO.getId())
 				.when()
-				.delete("{id}")
+				.delete("/{id}", personDTO.getId())
 				.then()
-				.statusCode(204)
-				.extract()
-				.body()
-				.asString();
+				.statusCode(204);
 	}
 }

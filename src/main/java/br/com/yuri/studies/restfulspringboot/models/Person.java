@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 import java.io.Serial;
@@ -35,8 +36,16 @@ public class Person implements Serializable {
 	@Column(nullable = false, length = 6)
 	private String gender;
 
+	@Column(nullable = false)
+	private Boolean enabled;
+
 	public Person() {
 		// empty constructor.
+	}
+
+	@PrePersist
+	private void prePersist() {
+		enabled = Boolean.TRUE;
 	}
 
 	public Long getId() {
@@ -79,16 +88,24 @@ public class Person implements Serializable {
 		this.gender = gender;
 	}
 
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Person person = (Person) o;
-		return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender);
+		return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(gender, person.gender) && Objects.equals(enabled, person.enabled);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, firstName, lastName, address, gender);
+		return Objects.hash(id, firstName, lastName, address, gender, enabled);
 	}
 }

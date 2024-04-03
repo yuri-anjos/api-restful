@@ -1,6 +1,7 @@
 package br.com.yuri.studies.restfulspringboot.services;
 
 import br.com.yuri.studies.restfulspringboot.exceptions.ResourceNotFoundException;
+import br.com.yuri.studies.restfulspringboot.exceptions.RuleException;
 import br.com.yuri.studies.restfulspringboot.mocks.MockPerson;
 import br.com.yuri.studies.restfulspringboot.repositories.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +86,7 @@ class PersonServiceTest {
 		var exception = assertThrows(ResourceNotFoundException.class, () -> service.deleteById(1L));
 
 		verify(personRepository).findById(1L);
-		assertEquals("Person not found.", exception.getMessage());
+		assertEquals("Person not found!", exception.getMessage());
 	}
 
 	@Test
@@ -143,7 +144,7 @@ class PersonServiceTest {
 
 		verify(personRepository).findById(1L);
 		verifyNoMoreInteractions(personRepository);
-		assertEquals("Person not found.", exception.getMessage());
+		assertEquals("Person not found!", exception.getMessage());
 	}
 
 	@Test
@@ -166,6 +167,43 @@ class PersonServiceTest {
 
 		verify(personRepository).findById(1L);
 		verifyNoMoreInteractions(personRepository);
-		assertEquals("Person not found.", exception.getMessage());
+		assertEquals("Person not found!", exception.getMessage());
+	}
+
+	@Test
+	void disablePersonSuccess() {
+		var entity = mockPerson.mockEntity(1);
+
+		when(personRepository.findById(1L)).thenReturn(Optional.of(entity));
+
+		service.disablePerson(1L);
+
+		verify(personRepository).findById(1L);
+		verify(personRepository).disablePerson(1L);
+	}
+
+	@Test
+	void disablePersonAlreadyDisabled() {
+		var entity = mockPerson.mockEntity(1);
+		entity.setEnabled(Boolean.FALSE);
+
+		when(personRepository.findById(1L)).thenReturn(Optional.of(entity));
+
+		var exception = assertThrows(RuleException.class, () -> service.disablePerson(1L));
+
+		verify(personRepository).findById(1L);
+		verifyNoMoreInteractions(personRepository);
+		assertEquals("Person is already disabled!", exception.getMessage());
+	}
+
+	@Test
+	void disablePersonNotFound() {
+		when(personRepository.findById(1L)).thenReturn(Optional.empty());
+
+		var exception = assertThrows(ResourceNotFoundException.class, () -> service.disablePerson(1L));
+
+		verify(personRepository).findById(1L);
+		verifyNoMoreInteractions(personRepository);
+		assertEquals("Person not found!", exception.getMessage());
 	}
 }

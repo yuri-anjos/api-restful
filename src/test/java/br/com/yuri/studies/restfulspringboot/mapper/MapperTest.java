@@ -27,6 +27,7 @@ class MapperTest {
 		assertEquals("Last Name Test0", output.getLastName());
 		assertEquals("Addres Test0", output.getAddress());
 		assertEquals("Male", output.getGender());
+		assertEquals(Boolean.TRUE, output.getEnabled());
 	}
 
 	@Test
@@ -39,6 +40,7 @@ class MapperTest {
 		assertEquals("Last Name Test0", outputZero.getLastName());
 		assertEquals("Addres Test0", outputZero.getAddress());
 		assertEquals("Male", outputZero.getGender());
+		assertEquals(Boolean.TRUE, outputZero.getEnabled());
 
 		PersonDTO outputSeven = outputList.get(7);
 
@@ -47,6 +49,7 @@ class MapperTest {
 		assertEquals("Last Name Test7", outputSeven.getLastName());
 		assertEquals("Addres Test7", outputSeven.getAddress());
 		assertEquals("Female", outputSeven.getGender());
+		assertEquals(Boolean.TRUE, outputSeven.getEnabled());
 	}
 
 	@Test
@@ -57,6 +60,7 @@ class MapperTest {
 		assertEquals("Last Name Test0", output.getLastName());
 		assertEquals("Addres Test0", output.getAddress());
 		assertEquals("Male", output.getGender());
+		assertEquals(Boolean.TRUE, output.getEnabled());
 	}
 
 	@Test
@@ -69,6 +73,7 @@ class MapperTest {
 		assertEquals("Last Name Test0", outputZero.getLastName());
 		assertEquals("Addres Test0", outputZero.getAddress());
 		assertEquals("Male", outputZero.getGender());
+		assertEquals(Boolean.TRUE, outputZero.getEnabled());
 
 		Person outputSeven = outputList.get(7);
 
@@ -77,5 +82,6 @@ class MapperTest {
 		assertEquals("Last Name Test7", outputSeven.getLastName());
 		assertEquals("Addres Test7", outputSeven.getAddress());
 		assertEquals("Female", outputSeven.getGender());
+		assertEquals(Boolean.TRUE, outputSeven.getEnabled());
 	}
 }

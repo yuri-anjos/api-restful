@@ -1,6 +1,6 @@
-INSERT INTO `person` (address,first_name,gender,last_name) VALUES
-	 ('Sapucaia','Yuri','Male','Anjos'),
-	 ('Esteio','Igao','Male','Anjos'),
-	 ('Sao Paulo','Luciana','Female','Anjos'),
-	 ('Santa Catarina','Pedresco','Female','Anjos'),
-	 ('Sapucaia','Jorlan','Male','Anjos');
+INSERT INTO `person` (address,first_name,gender,last_name,enabled) VALUES
+	 ('Sapucaia','Yuri','Male','Anjos',b'1'),
+	 ('Esteio','Igao','Male','Junior',b'1'),
+	 ('Sao Paulo','Luciana','Female','Junior',b'1'),
+	 ('Santa Catarina','Petrusca','Female','Junior',b'1'),
+	 ('Sapucaia','Jorlan','Male','Junior',b'1');
