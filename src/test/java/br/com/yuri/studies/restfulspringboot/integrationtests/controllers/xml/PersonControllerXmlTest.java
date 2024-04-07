@@ -4,9 +4,12 @@ import br.com.yuri.studies.restfulspringboot.configs.TestConfigs;
 import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.AccountCredentialsDTO;
 import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.PersonDTO;
 import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.TokenDTO;
+import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.wrappers.PagedModelPerson;
 import br.com.yuri.studies.restfulspringboot.integrationtests.testcontainers.AbstractIntegrationTest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -35,7 +38,7 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	@BeforeAll
 	public static void setUp() {
-		objectMapper = new ObjectMapper();
+		objectMapper = new XmlMapper();
 		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		personDTO = new PersonDTO();
 	}
@@ -117,17 +120,20 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	@Test
 	@Order(3)
-	void testFindAll() {
-		var people = given().spec(specification)
+	void testFindAll() throws JsonProcessingException {
+		var content = given().spec(specification)
 				.when()
 				.get()
 				.then()
 				.statusCode(200)
 				.extract()
 				.body()
-				.as(PersonDTO[].class);
+				.asString();
 
-		assertTrue(people.length > 0);
+		var wrapper = objectMapper.readValue(content, PagedModelPerson.class);
+		var people = wrapper.getContent();
+		assertNotNull(people.get(0));
+		assertEquals(12, people.size());
 	}
 
 	@Test
@@ -203,5 +209,27 @@ class PersonControllerXmlTest extends AbstractIntegrationTest {
 				.delete("/{id}", personDTO.getId())
 				.then()
 				.statusCode(204);
+	}
+
+	@Test
+	@Order(8)
+	void testFindAllHateoas()  {
+		var content = given().spec(specification)
+				.queryParams("page", 3, "size", 10)
+				.when()
+				.get()
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		assertTrue(content.contains("<links><rel>first</rel><href>http://localhost:8888/api/person/v1?sortBy=firstName&amp;sortDirection=ASC&amp;page=0&amp;size=10&amp;sort=firstName,asc</href></links>"));
+		assertTrue(content.contains("<links><rel>first</rel><href>http://localhost:8888/api/person/v1?sortBy=firstName&amp;sortDirection=ASC&amp;page=0&amp;size=10&amp;sort=firstName,asc</href></links>"));
+		assertTrue(content.contains("<links><rel>prev</rel><href>http://localhost:8888/api/person/v1?sortBy=firstName&amp;sortDirection=ASC&amp;page=2&amp;size=10&amp;sort=firstName,asc</href></links>"));
+		assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/person/v1?page=3&amp;size=10&amp;sortBy=firstName&amp;sortDirection=ASC</href></links>"));
+		assertTrue(content.contains("<links><rel>next</rel><href>http://localhost:8888/api/person/v1?sortBy=firstName&amp;sortDirection=ASC&amp;page=4&amp;size=10&amp;sort=firstName,asc</href></links>"));
+		assertTrue(content.contains("<links><rel>last</rel><href>http://localhost:8888/api/person/v1?sortBy=firstName&amp;sortDirection=ASC&amp;page=100&amp;size=10&amp;sort=firstName,asc</href>"));
+		assertTrue(content.contains("<page><size>10</size><totalElements>1005</totalElements><totalPages>101</totalPages><number>3</number></page>"));
 	}
 }

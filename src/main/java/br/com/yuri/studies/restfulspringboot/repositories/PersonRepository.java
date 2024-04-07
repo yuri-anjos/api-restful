@@ -11,5 +11,5 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 
 	@Modifying
 	@Query("UPDATE Person p SET p.enabled = FALSE WHERE p.id = ?1")
-	void disablePerson(Long id);
+	Integer disablePerson(Long id);
 }

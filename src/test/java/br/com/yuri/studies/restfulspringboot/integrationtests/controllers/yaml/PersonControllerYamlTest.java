@@ -5,6 +5,7 @@ import br.com.yuri.studies.restfulspringboot.integrationtests.controllers.yaml.m
 import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.AccountCredentialsDTO;
 import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.PersonDTO;
 import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.TokenDTO;
+import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.wrappers.PagedModelPerson;
 import br.com.yuri.studies.restfulspringboot.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -133,16 +134,18 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
 	@Test
 	@Order(3)
 	void testFindAll() {
-		var people = given().spec(specification)
+		var wrapper = given().spec(specification)
 				.when()
 				.get()
 				.then()
 				.statusCode(200)
 				.extract()
 				.body()
-				.as(PersonDTO[].class, mapper);
+				.as(PagedModelPerson.class, mapper);
 
-		assertTrue(people.length > 0);
+		var people = wrapper.getContent();
+		assertNotNull(people.get(0));
+		assertEquals(12, people.size());
 	}
 
 	@Test
@@ -218,5 +221,27 @@ class PersonControllerYamlTest extends AbstractIntegrationTest {
 				.delete("/{id}", personDTO.getId())
 				.then()
 				.statusCode(204);
+	}
+
+	@Test
+	@Order(8)
+	void testFindAllHateoas()  {
+		var content = given().spec(specification)
+				.queryParams("page", 3, "size", 10)
+				.when()
+				.get()
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		assertTrue(content.contains("- rel: \"first\"\n  href: \"http://localhost:8888/api/person/v1?sortBy=firstName&sortDirection=ASC&page=0&size=10&sort=firstName,asc\"\n"));
+		assertTrue(content.contains("- rel: \"prev\"\n  href: \"http://localhost:8888/api/person/v1?sortBy=firstName&sortDirection=ASC&page=2&size=10&sort=firstName,asc\"\n"));
+		assertTrue(content.contains("- rel: \"self\"\n  href: \"http://localhost:8888/api/person/v1?page=3&size=10&sortBy=firstName&sortDirection=ASC\"\n"));
+		assertTrue(content.contains("- rel: \"next\"\n  href: \"http://localhost:8888/api/person/v1?sortBy=firstName&sortDirection=ASC&page=4&size=10&sort=firstName,asc\"\n"));
+		assertTrue(content.contains("- rel: \"last\"\n  href: \"http://localhost:8888/api/person/v1?sortBy=firstName&sortDirection=ASC&page=100&size=10&sort=firstName,asc\""));
+		assertTrue(content.contains("page:\n  size: 10\n  totalElements: 1005\n  totalPages: 101\n  number: 3"));
+
 	}
 }

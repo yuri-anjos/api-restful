@@ -1,5 +1,6 @@
 package br.com.yuri.studies.restfulspringboot.services;
 
+import br.com.yuri.studies.restfulspringboot.dtos.PersonDTO;
 import br.com.yuri.studies.restfulspringboot.exceptions.ResourceNotFoundException;
 import br.com.yuri.studies.restfulspringboot.exceptions.RuleException;
 import br.com.yuri.studies.restfulspringboot.mocks.MockPerson;
@@ -10,6 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
 
 import java.util.Optional;
 
@@ -30,6 +35,9 @@ class PersonServiceTest {
 	@Mock
 	private PersonRepository personRepository;
 
+	@Mock
+	private PagedResourcesAssembler<PersonDTO> personDtoAssembler;
+
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
@@ -39,25 +47,27 @@ class PersonServiceTest {
 
 	@Test
 	void findAll() {
+		var pageRequest = PageRequest.of(0, 12, Sort.by(Sort.Direction.ASC, "firstName"));
+
 		var personList = mockPerson.mockEntityList();
+		var personListPage = new PageImpl<>(personList);
 		var personDTOList = mockPerson.mockDTOList();
 
-		when(personRepository.findAll()).thenReturn(personList);
+		when(personRepository.findAll(pageRequest)).thenReturn(personListPage);
 
-		var result = service.findAll();
+		var result = service.findAll(pageRequest);
 
+		verify(personRepository).findAll(pageRequest);
 		assertNotNull(result);
-		assertEquals(10, result.size());
+		assertEquals(10, result.getContent().size());
 
-		var p1 = result.get(0);
+		var p1 = result.getContent().get(0);
 		var dto1 = personDTOList.get(0);
-
 		assertEquals(dto1.getKey(), p1.getKey());
 		assertEquals(dto1.getFirstName(), p1.getFirstName());
 		assertEquals(dto1.getLastName(), p1.getLastName());
 		assertEquals(dto1.getAddress(), p1.getAddress());
 		assertEquals(dto1.getGender(), p1.getGender());
-		System.out.println(p1.getLinks());
 		assertTrue(p1.getLinks().toString().contains("</person/v1/0>;rel=\"self\""));
 	}
 

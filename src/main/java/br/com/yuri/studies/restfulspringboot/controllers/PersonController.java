@@ -10,6 +10,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,14 +27,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/person/v1")
 @Tag(name = "People", description = "Endpoints that manages people")
 public class PersonController {
+
+	@Autowired
+	private PagedResourcesAssembler<PersonDTO> personDtoAssembler;
 
 	private final PersonService personService;
 
@@ -51,8 +62,18 @@ public class PersonController {
 			}
 	)
 	@GetMapping(produces = {ProjectMediaType.APPLICATION_JSON, ProjectMediaType.APPLICATION_XML, ProjectMediaType.APPLICATION_YML})
-	public List<PersonDTO> findAll() {
-		return personService.findAll();
+	public PagedModel<EntityModel<PersonDTO>> findAll(@RequestParam(defaultValue = "0") Integer page,
+													  @RequestParam(defaultValue = "12") Integer size,
+													  @RequestParam(defaultValue = "firstName") String sortBy,
+													  @RequestParam(defaultValue = "ASC") String sortDirection) {
+
+		var direction = "desc".equalsIgnoreCase(sortDirection) ? Sort.Direction.DESC : Sort.Direction.ASC;
+		var pageRequest = PageRequest.of(page, size, Sort.by(direction, sortBy));
+		var pageDTO = personService.findAll(pageRequest);
+
+		Link link = linkTo(methodOn(PersonController.class)
+				.findAll(page, size, sortBy, sortDirection)).withSelfRel();
+		return personDtoAssembler.toModel(pageDTO, link);
 	}
 
 	@Operation(

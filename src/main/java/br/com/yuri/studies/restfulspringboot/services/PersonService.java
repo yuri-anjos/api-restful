@@ -8,10 +8,11 @@ import br.com.yuri.studies.restfulspringboot.mapper.Mapper;
 import br.com.yuri.studies.restfulspringboot.models.Person;
 import br.com.yuri.studies.restfulspringboot.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -29,13 +30,11 @@ public class PersonService {
 		this.personRepository = personRepository;
 	}
 
-	public List<PersonDTO> findAll() {
-		var result = personRepository.findAll();
-
-		var resultDTO = Mapper.parseObject(result, PersonDTO.class);
-		resultDTO.forEach(p ->
-				p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
-		return resultDTO;
+	public Page<PersonDTO> findAll(PageRequest pageRequest) {
+		var result = personRepository.findAll(pageRequest);
+		var resultDto = result.map(item -> Mapper.parseObject(item, PersonDTO.class));
+		resultDto.map(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+		return resultDto;
 	}
 
 	public PersonDTO findById(Long id) {
@@ -79,7 +78,7 @@ public class PersonService {
 		LOGGER.info("Disabling a Person...");
 
 		var person = findEntity(id);
-		if(Boolean.FALSE.equals(person.getEnabled())){
+		if (Boolean.FALSE.equals(person.getEnabled())) {
 			throw new RuleException("Person is already disabled!");
 		}
 

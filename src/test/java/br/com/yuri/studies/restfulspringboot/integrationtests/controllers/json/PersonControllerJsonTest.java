@@ -5,8 +5,8 @@ import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.AccountCreden
 import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.PersonDTO;
 import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.TokenDTO;
 import br.com.yuri.studies.restfulspringboot.integrationtests.testcontainers.AbstractIntegrationTest;
+import br.com.yuri.studies.restfulspringboot.integrationtests.dtos.wrappers.WrapperPersonDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.builder.RequestSpecBuilder;
@@ -20,8 +20,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -118,13 +116,12 @@ class PersonControllerJsonTest extends AbstractIntegrationTest {
 		assertEquals(personDTO.getGender(), result.getGender());
 		assertTrue(result.getEnabled());
 
-		personDTO = result;
+		personDTO.setId(result.getId());
 	}
 
 	@Test
 	@Order(3)
 	void testFindAll() throws JsonProcessingException {
-
 		var content = given().spec(specification)
 				.when()
 				.get()
@@ -134,10 +131,10 @@ class PersonControllerJsonTest extends AbstractIntegrationTest {
 				.body()
 				.asString();
 
-		List<PersonDTO> people = objectMapper.readValue(content, new TypeReference<>() {
-		});
-
-		assertTrue(people.size() > 0);
+		var wrapper = objectMapper.readValue(content, WrapperPersonDTO.class);
+		var people = wrapper.getEmbedded().getPersons();
+		assertNotNull(people.get(0));
+		assertEquals(12, people.size());
 	}
 
 	@Test
@@ -217,5 +214,26 @@ class PersonControllerJsonTest extends AbstractIntegrationTest {
 				.delete("/{id}", personDTO.getId())
 				.then()
 				.statusCode(204);
+	}
+
+	@Test
+	@Order(8)
+	void testFindAllHateoas()  {
+		var content = given().spec(specification)
+				.queryParams("page", 3, "size", 10)
+				.when()
+				.get()
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+		assertTrue(content.contains("\"first\":{\"href\":\"http://localhost:8888/api/person/v1?sortBy=firstName&sortDirection=ASC&page=0&size=10&sort=firstName,asc\"}"));
+		assertTrue(content.contains("\"prev\":{\"href\":\"http://localhost:8888/api/person/v1?sortBy=firstName&sortDirection=ASC&page=2&size=10&sort=firstName,asc\"}"));
+		assertTrue(content.contains("\"self\":{\"href\":\"http://localhost:8888/api/person/v1?page=3&size=10&sortBy=firstName&sortDirection=ASC\"}"));
+		assertTrue(content.contains("\"next\":{\"href\":\"http://localhost:8888/api/person/v1?sortBy=firstName&sortDirection=ASC&page=4&size=10&sort=firstName,asc\"}"));
+		assertTrue(content.contains("\"last\":{\"href\":\"http://localhost:8888/api/person/v1?sortBy=firstName&sortDirection=ASC&page=100&size=10&sort=firstName,asc\"}"));
+		assertTrue(content.contains("\"page\":{\"size\":10,\"totalElements\":1005,\"totalPages\":101,\"number\":3}"));
 	}
 }
