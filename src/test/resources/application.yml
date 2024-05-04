@@ -35,4 +35,4 @@ security:
       expire-length: 3600000
 
 file:
-  upload-dir: /UploadDir
+  upload-dir: /home/runner/work/api-restful/UploadDir

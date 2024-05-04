@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>21</java.version>
 		<jackson.version>2.15.4</jackson.version>
+		<flyway.version>10.11.0</flyway.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -58,10 +59,12 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
+			<version>${flyway.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
+			<version>${flyway.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>

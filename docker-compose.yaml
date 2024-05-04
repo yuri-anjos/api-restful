@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  api-restful-mysql-database:
+    image: mysql:8.3
+    container_name: "api-restful-mysql-database"
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      TZ: America/Sao_Paulo
+      MYSQL_USER: admin123
+      MYSQL_PASSWORD: admin123
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: api-restful
+    networks:
+      - api-restful-network
+    volumes:
+      - api-restful-data:/temp
+
+  api-restful-java:
+    image: yurianjos/api-restful-java
+    container_name: "api-restful-java"
+    build: ./
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: America/Sao_Paulo
+      SPRING.DATASOURCE.URL: jdbc:mysql://api-restful-mysql-database:3306/api-restful?useTimezone=true&serverTimezone=UTC
+      SPRING.DATASOURCE.USERNAME: root
+      SPRING.DATASOURCE.PASSWORD: root
+    command: mvn clean spring-boot:run
+    networks:
+      - api-restful-network
+    volumes:
+      - api-restful-data:/temp
+    depends_on:
+      - api-restful-mysql-database
+
+volumes:
+  api-restful-data: {}
+
+networks:
+  api-restful-network:
