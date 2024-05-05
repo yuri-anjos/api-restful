@@ -33,8 +33,7 @@ jobs:
 
     - name: Push to Docker Hub
       run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/api-restful-java:latest
-
         docker tag ${{ secrets.DOCKER_USERNAME }}/api-restful-java:latest ${{ secrets.DOCKER_USERNAME }}/api-restful-java:${{ github.run_id }}
         
         docker push ${{ secrets.DOCKER_USERNAME }}/api-restful-java:${{ github.run_id }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/api-restful-java:latest
