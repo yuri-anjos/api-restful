@@ -6,9 +6,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/api-restful?useTimezone=true&serverTimezone=UTC
-    username: root
-    password: root
+    url: jdbc:mysql://localhost:3306/api_restful_mysql_database?useTimezone=true&serverTimezone=UTC
+    username: admin123
+    password: admin123
   jpa:
     show-sql: true
     hibernate:
