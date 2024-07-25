@@ -22,7 +22,7 @@ services:
   api-restful-java:
     image: yurianjos/api-restful-java
     container_name: "api-restful-java"
-#   Remove 'build' to run project locally
+#   Remove 'build' to run the entire project locally with docker
     build: ./
     restart: unless-stopped
     ports:
