@@ -2129,7 +2129,7 @@
 					]
 				},
 				{
-					"name": "Store File Copy",
+					"name": "Recover File",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -2157,7 +2157,8 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/C:/Users/Yuri/Downloads/Curriculo - Copia.pdf"
+									"src": [],
+									"disabled": true
 								}
 							]
 						},
