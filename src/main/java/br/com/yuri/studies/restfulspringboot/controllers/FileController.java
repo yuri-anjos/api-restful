@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,7 @@ import java.util.logging.Logger;
 public class FileController {
 	private static final Logger LOGGER = Logger.getLogger(FileController.class.getName());
 
-	private FileStorageService service;
+	private final FileStorageService service;
 
 	@Autowired
 	public FileController(FileStorageService fileStorageService) {
@@ -48,11 +49,12 @@ public class FileController {
 		return new UploadFileResponseDTO(filename, fileDownloadUri, file.getContentType(), file.getSize());
 	}
 
+	@PreAuthorize(value = "hasRole('COMMON_USER')")
 	@PostMapping("/uploadMultipleFiles")
 	public List<UploadFileResponseDTO> uploadMultipleFiles(@RequestParam(name = "files") MultipartFile[] files) {
 		LOGGER.info("<uploadMultipleFiles> Storing files on disk...");
 
-		return Arrays.asList(files).stream().map(this::uploadFile).toList();
+		return Arrays.stream(files).map(this::uploadFile).toList();
 	}
 
 	@GetMapping("/downloadFile/{filename:.+}")
