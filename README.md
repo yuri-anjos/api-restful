@@ -1,7 +1,10 @@
-# api-restful
+# API Restful
 
 ### Complete restful api - Java
 
-Docker MYSQL:
-docker run --name mysql-restful-api-java -e MYSQL_ROOT_PASSWORD=root -v mysql-restful-api-java:/var/lib/mysql --restart unless-stopped -p 3306:3306 -d mysql
+A simple but complete Resful API using: 
+Hateoas, Unit Tests, Integration Tests Rest Assured, XML/YAML Content, MySQL, Flyway, JWT Authentication, OpenAPI Doc ...
 
+### Postman
+Collection: .\files\ApiRestfulSpringBoot3.postman_collection.json
+Environment: .\files\ApiRestful.postman_environment.json
