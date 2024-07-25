@@ -22,7 +22,7 @@ services:
   api-restful-java:
     image: yurianjos/api-restful-java
     container_name: "api-restful-java"
-#    build: ./
+    build: ./
     restart: unless-stopped
     ports:
       - "8080:8080"
